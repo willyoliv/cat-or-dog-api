@@ -24,20 +24,20 @@ class ImageList(APIView):
         images = Image.objects.all()
         serializer = ImageSerializer(images, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-
+    
+    
+    
 class ImagePredict(APIView):
     parser_classes = (MultiPartParser, FormParser,)
     serializer_class = ImageSerializer
-
+    
     def post(self, request, format=None):
         serializer = self.serializer_class(data=request.data)
         print(serializer)
         if serializer.is_valid():
             try:
                 img_req = request.FILES['imageFile']
-                img = image.load_img(img_req, target_size = (224, 224))
+                img = image.load_img(img_req, target_size = (128, 128))
                 img = image.img_to_array(img)
                 img = np.expand_dims(img, axis = 0)
                 x = cnn_model.predict(img)
@@ -48,20 +48,20 @@ class ImagePredict(APIView):
                 return Response({"prediction":ans}, status.HTTP_200_OK)
             except Exception as message:
                 return Response({'message':'Certifique-se que enviou uam imagem'}, status.HTTP_400_BAD_REQUEST)
-
+            
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
+    
+    
 class ImageSave(APIView):
     parser_classes = (MultiPartParser, FormParser,)
     serializer_class = ImageSerializer
-
+    
     def upload_image_cloudinary(self, request, image_name):
         cloudinary.uploader.upload(
             request.FILES['imageFile'],
             public_id=image_name
         )
-
+        
     def post(self, request, format=None):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
@@ -77,12 +77,12 @@ class ImageSave(APIView):
 
 class ImageDetail(APIView):
     serializer_class = ImageSerializer
-
+    
     def get(self, request, id, format=None):
         images = [Image.objects.get(id=id)]
         serializer = self.serializer_class(images, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
+    
     def delete(self, request, id, format=None):
         try:
             image = Image.objects.get(id=id)
@@ -90,3 +90,4 @@ class ImageDetail(APIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Exception as message:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
