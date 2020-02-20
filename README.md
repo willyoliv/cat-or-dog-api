@@ -10,4 +10,5 @@ This API is used to identify DOGS and CATS, just that, but our wish is for this 
 OUR RESEARCHERS 
 
 Thalyson Leonardo
+
 Adickson Vernek Rodrigues dos Santos Junior
