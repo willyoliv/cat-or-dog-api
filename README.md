@@ -9,6 +9,6 @@ This API is used to identify DOGS and CATS, just that, but our wish is for this 
 
 OUR RESEARCHERS 
 
-Thalyson Leonardo
+Thalyson Leonardo dos Santos Lopes
 
 Adickson Vernek Rodrigues dos Santos Junior
