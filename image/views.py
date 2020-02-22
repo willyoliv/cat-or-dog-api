@@ -17,6 +17,8 @@ import numpy as np
 # Create your views here.
 
 cnn_model = copy.copy(settings.CNN_MODEL)
+img_width = 128
+img_height = 128
 
 class ImageList(APIView):
     serializer_class = ImageSerializer
@@ -33,21 +35,22 @@ class ImagePredict(APIView):
     
     def post(self, request, format=None):
         serializer = self.serializer_class(data=request.data)
-        print(serializer)
         if serializer.is_valid():
             try:
                 img_req = request.FILES['imageFile']
-                img = image.load_img(img_req, target_size = (128, 128))
+                img = image.load_img(img_req, target_size = (img_width, img_height))
                 img = image.img_to_array(img)
                 img = np.expand_dims(img, axis = 0)
-                x = cnn_model.predict(img)
-                if(x == 0):
+                x = cnn_model.predict_classes(img)
+                if(x[0][0] == 0):
                     ans = "Gato"
-                elif(x == 1):
+                elif(x[0][0] == 1):
                     ans = "Cachorro"
+                else:
+                    ans = "Não foi possível reconhecer"
                 return Response({"prediction":ans}, status.HTTP_200_OK)
             except Exception as message:
-                return Response({'message':'Certifique-se que enviou uam imagem'}, status.HTTP_400_BAD_REQUEST)
+                return Response({'message': 'Certifique-se que enviou uam imagem'}, status.HTTP_400_BAD_REQUEST)
             
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
